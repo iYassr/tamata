@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { useSettingsStore } from '../../stores/settingsStore'
+import { Badge } from '@/components/ui/badge'
+import { useSettingsStore } from '@/stores/settingsStore'
 
 interface SessionIndicatorProps {
   currentSession: number
@@ -22,26 +23,24 @@ export function SessionIndicator({ currentSession, totalCompleted }: SessionIndi
               key={i}
               className="relative"
               initial={false}
-              animate={{
-                scale: isCurrent ? 1.2 : 1
-              }}
+              animate={{ scale: isCurrent ? 1.3 : 1 }}
               transition={{ type: 'spring', bounce: 0.5 }}
             >
               <div
                 className={`
                   w-3 h-3 rounded-full transition-all duration-300
                   ${isCompleted
-                    ? 'bg-orange-500'
+                    ? 'bg-primary'
                     : isCurrent
-                    ? 'bg-orange-500/50 ring-2 ring-orange-500/50 ring-offset-2 ring-offset-zinc-900'
-                    : 'bg-zinc-700'
+                    ? 'bg-primary/50 ring-2 ring-primary/50 ring-offset-2 ring-offset-background'
+                    : 'bg-muted'
                   }
                 `}
               />
               {isCurrent && (
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-orange-500"
-                  animate={{ scale: [1, 1.5], opacity: [0.5, 0] }}
+                  className="absolute inset-0 rounded-full bg-primary"
+                  animate={{ scale: [1, 1.8], opacity: [0.5, 0] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 />
               )}
@@ -51,11 +50,10 @@ export function SessionIndicator({ currentSession, totalCompleted }: SessionIndi
       </div>
 
       {/* Stats */}
-      <div className="flex items-center gap-3 text-sm">
-        <span className="text-zinc-500">Today:</span>
-        <span className="text-white font-medium">{totalCompleted}</span>
-        <span className="text-zinc-600">session{totalCompleted !== 1 ? 's' : ''}</span>
-      </div>
+      <Badge variant="secondary" className="gap-2">
+        <span className="text-muted-foreground">Today:</span>
+        <span className="font-semibold">{totalCompleted} sessions</span>
+      </Badge>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useAnalyticsStore } from '../../stores/analyticsStore'
+import { useAnalyticsStore } from '@/stores/analyticsStore'
 import { DailyStats } from './DailyStats'
 import { WeeklyChart } from './WeeklyChart'
 import { StreakCounter } from './StreakCounter'
@@ -15,7 +15,7 @@ export function Analytics() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-48">
-        <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -23,7 +23,7 @@ export function Analytics() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">Today</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Today</h3>
         <DailyStats stats={todayStats} />
       </div>
 

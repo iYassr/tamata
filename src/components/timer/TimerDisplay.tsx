@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
-import { formatTime } from '../../lib/utils'
-import type { TimerMode } from '../../types'
+import { formatTime } from '@/lib/utils'
+import type { TimerMode } from '@/types'
 
 interface TimerDisplayProps {
   timeRemaining: number
@@ -11,27 +11,23 @@ interface TimerDisplayProps {
 
 const modeConfig: Record<TimerMode, {
   gradient: string
-  glow: string
+  glowColor: string
   label: string
-  bg: string
 }> = {
   work: {
-    gradient: 'url(#orangeGradient)',
-    glow: 'rgba(249, 115, 22, 0.4)',
-    label: 'Focus Time',
-    bg: 'rgba(249, 115, 22, 0.05)'
+    gradient: 'from-orange-500 to-amber-500',
+    glowColor: 'orange',
+    label: 'Focus Time'
   },
   shortBreak: {
-    gradient: 'url(#greenGradient)',
-    glow: 'rgba(34, 197, 94, 0.4)',
-    label: 'Short Break',
-    bg: 'rgba(34, 197, 94, 0.05)'
+    gradient: 'from-emerald-500 to-green-500',
+    glowColor: 'emerald',
+    label: 'Short Break'
   },
   longBreak: {
-    gradient: 'url(#blueGradient)',
-    glow: 'rgba(59, 130, 246, 0.4)',
-    label: 'Long Break',
-    bg: 'rgba(59, 130, 246, 0.05)'
+    gradient: 'from-blue-500 to-cyan-500',
+    glowColor: 'blue',
+    label: 'Long Break'
   }
 }
 
@@ -42,19 +38,14 @@ export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: Timer
 
   return (
     <div className="relative flex items-center justify-center">
-      {/* Outer glow */}
-      <div
-        className="absolute inset-0 rounded-full blur-3xl opacity-30 transition-all duration-1000"
-        style={{
-          background: config.glow,
-          transform: isRunning ? 'scale(1.1)' : 'scale(1)'
+      {/* Glow effect */}
+      <motion.div
+        className={`absolute w-80 h-80 rounded-full bg-gradient-to-br ${config.gradient} opacity-20 blur-3xl`}
+        animate={{
+          scale: isRunning ? [1, 1.1, 1] : 1,
+          opacity: isRunning ? [0.15, 0.25, 0.15] : 0.1
         }}
-      />
-
-      {/* Background circle */}
-      <div
-        className="absolute inset-4 rounded-full transition-colors duration-500"
-        style={{ background: config.bg }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
       />
 
       <svg
@@ -63,27 +54,11 @@ export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: Timer
         height="320"
         viewBox="0 0 320 320"
       >
-        {/* Gradients */}
         <defs>
-          <linearGradient id="orangeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#f97316" />
-            <stop offset="100%" stopColor="#ea580c" />
+          <linearGradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" className="[stop-color:var(--primary)]" />
+            <stop offset="100%" className="[stop-color:var(--accent)]" />
           </linearGradient>
-          <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#22c55e" />
-            <stop offset="100%" stopColor="#16a34a" />
-          </linearGradient>
-          <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#3b82f6" />
-            <stop offset="100%" stopColor="#2563eb" />
-          </linearGradient>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
         </defs>
 
         {/* Track */}
@@ -92,7 +67,7 @@ export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: Timer
           cy="160"
           r="140"
           fill="none"
-          stroke="rgba(63, 63, 70, 0.5)"
+          className="stroke-muted"
           strokeWidth="8"
         />
 
@@ -102,32 +77,20 @@ export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: Timer
           cy="160"
           r="140"
           fill="none"
-          stroke={config.gradient}
+          className="stroke-primary"
           strokeWidth="10"
           strokeLinecap="round"
           strokeDasharray={circumference}
           initial={{ strokeDashoffset: circumference }}
           animate={{ strokeDashoffset }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          filter={isRunning ? 'url(#glow)' : undefined}
         />
-
-        {/* End cap glow */}
-        {progress > 0 && (
-          <motion.circle
-            cx={160 + 140 * Math.cos((progress * 2 * Math.PI) - Math.PI / 2)}
-            cy={160 + 140 * Math.sin((progress * 2 * Math.PI) - Math.PI / 2)}
-            r="5"
-            fill="white"
-            opacity={isRunning ? 0.8 : 0.5}
-          />
-        )}
       </svg>
 
       {/* Timer content */}
       <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
         <motion.span
-          className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500 mb-3"
+          className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground mb-3"
           animate={{ opacity: isRunning ? [0.5, 1, 0.5] : 1 }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
@@ -135,21 +98,17 @@ export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: Timer
         </motion.span>
 
         <motion.div
-          className="text-7xl font-bold tabular-nums tracking-tight text-white"
+          className="text-7xl font-bold tabular-nums tracking-tight"
           animate={isRunning ? {
-            textShadow: [
-              '0 0 20px rgba(255,255,255,0)',
-              '0 0 20px rgba(255,255,255,0.3)',
-              '0 0 20px rgba(255,255,255,0)'
-            ]
+            opacity: [1, 0.8, 1]
           } : {}}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
           {formatTime(timeRemaining)}
         </motion.div>
 
-        <div className="mt-4 text-xs text-zinc-600">
-          {isRunning ? 'Running' : 'Paused'}
+        <div className="mt-4 text-xs text-muted-foreground">
+          {isRunning ? 'Running' : 'Ready'}
         </div>
       </div>
     </div>

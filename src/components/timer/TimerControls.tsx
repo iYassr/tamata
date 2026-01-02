@@ -1,5 +1,12 @@
 import { motion } from 'framer-motion'
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 interface TimerControlsProps {
   isRunning: boolean
@@ -10,84 +17,62 @@ interface TimerControlsProps {
 
 export function TimerControls({ isRunning, onToggle, onReset, onSkip }: TimerControlsProps) {
   return (
-    <div className="flex items-center gap-4">
-      <ControlButton
-        onClick={onReset}
-        label="Reset"
-        shortcut="R"
-      >
-        <RotateCcw className="w-5 h-5" />
-      </ControlButton>
+    <TooltipProvider>
+      <div className="flex items-center gap-4">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={onReset}
+              className="h-12 w-12 rounded-full"
+            >
+              <RotateCcw className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Reset (R)</p>
+          </TooltipContent>
+        </Tooltip>
 
-      <motion.button
-        onClick={onToggle}
-        className="relative w-20 h-20 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/30 flex items-center justify-center"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label={isRunning ? 'Pause timer' : 'Start timer'}
-      >
-        {/* Pulse ring */}
-        {isRunning && (
-          <motion.div
-            className="absolute inset-0 rounded-full border-2 border-orange-400"
-            animate={{ scale: [1, 1.2], opacity: [0.5, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeOut' }}
-          />
-        )}
-
-        <motion.div
-          key={isRunning ? 'pause' : 'play'}
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.5, opacity: 0 }}
-          transition={{ duration: 0.15 }}
-        >
-          {isRunning ? (
-            <Pause className="w-8 h-8" />
-          ) : (
-            <Play className="w-8 h-8 ml-1" />
-          )}
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            onClick={onToggle}
+            size="lg"
+            className="h-20 w-20 rounded-full shadow-lg shadow-primary/25"
+          >
+            <motion.div
+              key={isRunning ? 'pause' : 'play'}
+              initial={{ scale: 0.5, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.5, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              {isRunning ? (
+                <Pause className="h-8 w-8" />
+              ) : (
+                <Play className="h-8 w-8 ml-1" />
+              )}
+            </motion.div>
+          </Button>
         </motion.div>
-      </motion.button>
 
-      <ControlButton
-        onClick={onSkip}
-        label="Skip"
-        shortcut="S"
-      >
-        <SkipForward className="w-5 h-5" />
-      </ControlButton>
-    </div>
-  )
-}
-
-function ControlButton({
-  onClick,
-  label,
-  shortcut,
-  children
-}: {
-  onClick: () => void
-  label: string
-  shortcut: string
-  children: React.ReactNode
-}) {
-  return (
-    <motion.button
-      onClick={onClick}
-      className="group relative w-12 h-12 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-white flex items-center justify-center transition-colors"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
-      aria-label={label}
-    >
-      {children}
-
-      {/* Tooltip */}
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-        <div className="bg-zinc-800 text-xs text-zinc-300 px-2 py-1 rounded whitespace-nowrap">
-          {label} <span className="text-zinc-500">({shortcut})</span>
-        </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={onSkip}
+              className="h-12 w-12 rounded-full"
+            >
+              <SkipForward className="h-5 w-5" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Skip (S)</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
-    </motion.button>
+    </TooltipProvider>
   )
 }

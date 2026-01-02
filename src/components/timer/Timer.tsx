@@ -1,4 +1,4 @@
-import { useTimer } from '../../hooks/useTimer'
+import { useTimer } from '@/hooks/useTimer'
 import { TimerDisplay } from './TimerDisplay'
 import { TimerControls } from './TimerControls'
 import { SessionIndicator } from './SessionIndicator'

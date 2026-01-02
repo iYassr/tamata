@@ -1,8 +1,13 @@
 import { Volume2, VolumeX, Waves } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useAudio } from '../../hooks/useAudio'
-import { getSoundsByCategory } from '../../lib/sounds'
+import { useAudio } from '@/hooks/useAudio'
+import { getSoundsByCategory } from '@/lib/sounds'
 import { SoundPresets } from './SoundPresets'
+import { Button } from '@/components/ui/button'
+import { Slider } from '@/components/ui/slider'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 
 const categories = [
   { id: 'rain', label: 'Rain & Weather' },
@@ -38,61 +43,60 @@ export function SoundMixer() {
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute -top-1 -right-1 w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center text-xs font-bold text-white"
               >
-                {activeCount}
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                  {activeCount}
+                </Badge>
               </motion.div>
             )}
           </div>
           <div>
-            <div className="text-sm font-medium text-white">
+            <div className="text-sm font-medium">
               {activeCount > 0 ? `${activeCount} sound${activeCount > 1 ? 's' : ''} playing` : 'No sounds active'}
             </div>
-            <div className="text-xs text-zinc-500">Mix ambient sounds to focus</div>
+            <div className="text-xs text-muted-foreground">Mix ambient sounds to focus</div>
           </div>
         </div>
 
         <AnimatePresence>
           {activeCount > 0 && (
-            <motion.button
+            <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
-              onClick={stopAll}
-              className="p-2 rounded-lg bg-zinc-800 hover:bg-red-500/20 text-zinc-400 hover:text-red-400 transition-colors"
             >
-              <VolumeX className="w-5 h-5" />
-            </motion.button>
+              <Button
+                variant="secondary"
+                size="icon"
+                onClick={stopAll}
+                className="hover:bg-destructive/20 hover:text-destructive"
+              >
+                <VolumeX className="w-5 h-5" />
+              </Button>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
 
       {/* Master Volume */}
-      <div className="relative">
-        <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-zinc-400 flex items-center gap-2">
-            <Volume2 className="w-4 h-4" />
-            Master Volume
-          </span>
-          <span className="text-white font-medium">{Math.round(masterVolume * 100)}%</span>
-        </div>
-        <div className="relative h-2 bg-zinc-800 rounded-full overflow-hidden">
-          <motion.div
-            className="absolute inset-y-0 left-0 bg-gradient-to-r from-violet-500 to-purple-500 rounded-full"
-            style={{ width: `${masterVolume * 100}%` }}
-            layout
+      <Card className="bg-secondary/30">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between text-sm mb-3">
+            <span className="text-muted-foreground flex items-center gap-2">
+              <Volume2 className="w-4 h-4" />
+              Master Volume
+            </span>
+            <Badge variant="secondary">{Math.round(masterVolume * 100)}%</Badge>
+          </div>
+          <Slider
+            value={[masterVolume * 100]}
+            onValueChange={([value]) => setMasterVolume(value / 100)}
+            max={100}
+            step={1}
+            className="w-full"
           />
-        </div>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={masterVolume}
-          onChange={(e) => setMasterVolume(parseFloat(e.target.value))}
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        />
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Presets */}
       <SoundPresets
@@ -100,12 +104,14 @@ export function SoundMixer() {
         onSelectPreset={selectPreset}
       />
 
+      <Separator />
+
       {/* Sound Grid */}
       {categories.map(({ id, label }) => {
         const categorySounds = getSoundsByCategory(id)
         return (
           <div key={id}>
-            <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-600 mb-3">
+            <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
               {label}
             </h3>
             <div className="grid grid-cols-3 gap-2">
@@ -120,45 +126,47 @@ export function SoundMixer() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <button
-                      onClick={() => toggle(sound.id)}
+                    <Card
                       className={`
-                        w-full aspect-square rounded-2xl flex flex-col items-center justify-center gap-1 transition-all
+                        cursor-pointer transition-all overflow-hidden
                         ${isActive
-                          ? 'bg-gradient-to-br from-orange-500/20 to-orange-600/10 border-2 border-orange-500/50 shadow-lg shadow-orange-500/10'
-                          : 'bg-zinc-800/80 border-2 border-transparent hover:bg-zinc-700/80 hover:border-zinc-600'
+                          ? 'border-primary bg-primary/10 shadow-lg shadow-primary/10'
+                          : 'border-border hover:border-primary/50 hover:bg-secondary/50'
                         }
                       `}
+                      onClick={() => toggle(sound.id)}
                     >
-                      <span className="text-2xl">{sound.icon}</span>
-                      <span className={`text-[10px] font-medium ${isActive ? 'text-orange-300' : 'text-zinc-500'}`}>
-                        {sound.name}
-                      </span>
+                      <CardContent className="p-0 aspect-square flex flex-col items-center justify-center gap-1 relative">
+                        <span className="text-2xl">{sound.icon}</span>
+                        <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                          {sound.name}
+                        </span>
 
-                      {/* Volume indicator */}
-                      {isActive && (
-                        <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                          <div className="h-1 bg-zinc-700 rounded-full overflow-hidden">
-                            <motion.div
-                              className="h-full bg-orange-500 rounded-full"
-                              initial={{ width: 0 }}
-                              animate={{ width: `${volume * 100}%` }}
-                            />
+                        {/* Volume indicator */}
+                        {isActive && (
+                          <div className="absolute bottom-1.5 left-1.5 right-1.5">
+                            <div className="h-1 bg-muted rounded-full overflow-hidden">
+                              <motion.div
+                                className="h-full bg-primary rounded-full"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${volume * 100}%` }}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      )}
+                        )}
 
-                      {/* Playing indicator */}
-                      {isActive && (
-                        <motion.div
-                          className="absolute top-2 right-2"
-                          animate={{ opacity: [1, 0.5, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                        >
-                          <div className="w-2 h-2 rounded-full bg-orange-500" />
-                        </motion.div>
-                      )}
-                    </button>
+                        {/* Playing indicator */}
+                        {isActive && (
+                          <motion.div
+                            className="absolute top-2 right-2"
+                            animate={{ opacity: [1, 0.5, 1] }}
+                            transition={{ duration: 1.5, repeat: Infinity }}
+                          >
+                            <div className="w-2 h-2 rounded-full bg-primary" />
+                          </motion.div>
+                        )}
+                      </CardContent>
+                    </Card>
 
                     {/* Volume slider overlay */}
                     {isActive && (

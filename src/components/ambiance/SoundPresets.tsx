@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
-import { presets } from '../../lib/sounds'
+import { presets } from '@/lib/sounds'
+import { Card, CardContent } from '@/components/ui/card'
 
 interface SoundPresetsProps {
   currentPreset: string | null
@@ -20,8 +21,8 @@ export function SoundPresets({ currentPreset, onSelectPreset }: SoundPresetsProp
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <Sparkles className="w-3.5 h-3.5 text-zinc-500" />
-        <h3 className="text-xs font-medium uppercase tracking-wider text-zinc-600">
+        <Sparkles className="w-3.5 h-3.5 text-muted-foreground" />
+        <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
           Quick Presets
         </h3>
       </div>
@@ -30,34 +31,39 @@ export function SoundPresets({ currentPreset, onSelectPreset }: SoundPresetsProp
         {presets.map((preset) => {
           const isActive = currentPreset === preset.id
           return (
-            <motion.button
+            <motion.div
               key={preset.id}
-              onClick={() => onSelectPreset(preset.id)}
-              className={`
-                relative p-3 rounded-xl text-left transition-all overflow-hidden
-                ${isActive
-                  ? 'bg-gradient-to-br from-violet-500/20 to-purple-600/10 border border-violet-500/30'
-                  : 'bg-zinc-800/60 border border-zinc-700/50 hover:bg-zinc-800 hover:border-zinc-600'
-                }
-              `}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <div className="flex items-center gap-2">
-                <span className="text-lg">{presetIcons[preset.id] || '🎵'}</span>
-                <span className={`text-sm font-medium ${isActive ? 'text-violet-300' : 'text-zinc-400'}`}>
-                  {preset.name}
-                </span>
-              </div>
+              <Card
+                className={`
+                  cursor-pointer transition-all overflow-hidden
+                  ${isActive
+                    ? 'border-primary bg-primary/10'
+                    : 'border-border hover:border-primary/50 hover:bg-secondary/50'
+                  }
+                `}
+                onClick={() => onSelectPreset(preset.id)}
+              >
+                <CardContent className="p-3 relative">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{presetIcons[preset.id] || '🎵'}</span>
+                    <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {preset.name}
+                    </span>
+                  </div>
 
-              {isActive && (
-                <motion.div
-                  layoutId="activePreset"
-                  className="absolute inset-0 border-2 border-violet-500/50 rounded-xl"
-                  transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
-                />
-              )}
-            </motion.button>
+                  {isActive && (
+                    <motion.div
+                      layoutId="activePreset"
+                      className="absolute inset-0 border-2 border-primary/50 rounded-xl pointer-events-none"
+                      transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
+                    />
+                  )}
+                </CardContent>
+              </Card>
+            </motion.div>
           )
         })}
       </div>
