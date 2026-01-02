@@ -7,13 +7,30 @@ import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { useLanguage } from '@/contexts/LanguageContext'
+import type { TranslationKey } from '@/lib/i18n'
 
 const categories = [
-  { id: 'rain', label: 'Rain & Weather' },
-  { id: 'nature', label: 'Nature' },
-  { id: 'ambient', label: 'Ambient' },
-  { id: 'noise', label: 'Noise' }
+  { id: 'rain', labelKey: 'rainWeather' },
+  { id: 'nature', labelKey: 'nature' },
+  { id: 'ambient', labelKey: 'ambient' },
+  { id: 'noise', labelKey: 'noise' }
 ] as const
+
+const soundNameKeys: Record<string, TranslationKey> = {
+  'rain-light': 'lightRain',
+  'rain-heavy': 'heavyRain',
+  'thunder': 'thunder',
+  'forest': 'forest',
+  'ocean': 'oceanWaves',
+  'birds': 'birds',
+  'fire': 'fireplace',
+  'cafe': 'coffeeShop',
+  'lofi': 'lofiBeats',
+  'white-noise': 'whiteNoise',
+  'pink-noise': 'pinkNoise',
+  'brown-noise': 'brownNoise'
+}
 
 export function SoundMixer() {
   const {
@@ -27,6 +44,7 @@ export function SoundMixer() {
     setMasterVolume
   } = useAudio()
 
+  const { t } = useLanguage()
   const activeCount = Object.keys(activeSounds).length
 
   return (
@@ -51,9 +69,12 @@ export function SoundMixer() {
           </div>
           <div>
             <div className="text-sm font-medium">
-              {activeCount > 0 ? `${activeCount} sound${activeCount > 1 ? 's' : ''} playing` : 'No sounds active'}
+              {activeCount > 0
+                ? `${activeCount} ${activeCount > 1 ? t('soundsPlaying') : t('soundPlaying')}`
+                : t('noSoundsActive')
+              }
             </div>
-            <div className="text-xs text-muted-foreground">Mix ambient sounds to focus</div>
+            <div className="text-xs text-muted-foreground">{t('mixAmbientSounds')}</div>
           </div>
         </div>
 
@@ -82,7 +103,7 @@ export function SoundMixer() {
         <div className="flex items-center justify-between text-sm mb-3">
           <span className="text-muted-foreground flex items-center gap-2">
             <Volume2 className="w-4 h-4" />
-            Master Volume
+            {t('masterVolume')}
           </span>
           <Badge variant="secondary">{Math.round(masterVolume * 100)}%</Badge>
         </div>
@@ -104,17 +125,18 @@ export function SoundMixer() {
       <Separator />
 
       {/* Sound Grid */}
-      {categories.map(({ id, label }) => {
+      {categories.map(({ id, labelKey }) => {
         const categorySounds = getSoundsByCategory(id)
         return (
           <div key={id}>
             <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
-              {label}
+              {t(labelKey as TranslationKey)}
             </h3>
             <div className="grid grid-cols-3 gap-2">
               {categorySounds.map((sound) => {
                 const isActive = sound.id in activeSounds
                 const volume = activeSounds[sound.id] ?? 0.5
+                const soundName = soundNameKeys[sound.id] ? t(soundNameKeys[sound.id]) : sound.name
 
                 return (
                   <motion.div
@@ -136,7 +158,7 @@ export function SoundMixer() {
                     >
                       <span className="text-2xl">{sound.icon}</span>
                       <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
-                        {sound.name}
+                        {soundName}
                       </span>
 
                       {/* Volume indicator */}
@@ -155,7 +177,7 @@ export function SoundMixer() {
                       {/* Playing indicator */}
                       {isActive && (
                         <motion.div
-                          className="absolute top-2 right-2"
+                          className="absolute top-2 end-2"
                           animate={{ opacity: [1, 0.5, 1] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
                         >

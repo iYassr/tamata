@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
 import { presets } from '@/lib/sounds'
+import { useLanguage } from '@/contexts/LanguageContext'
+import type { TranslationKey } from '@/lib/i18n'
 
 interface SoundPresetsProps {
   currentPreset: string | null
@@ -16,19 +18,32 @@ const presetIcons: Record<string, string> = {
   'lofi-rain': '🎵🌧️'
 }
 
+const presetNameKeys: Record<string, TranslationKey> = {
+  'rainy-cafe': 'rainyCafe',
+  'forest-retreat': 'forestRetreat',
+  'cozy-fire': 'cozyFire',
+  'ocean-breeze': 'oceanBreeze',
+  'deep-focus': 'deepFocus',
+  'lofi-rain': 'lofiRain'
+}
+
 export function SoundPresets({ currentPreset, onSelectPreset }: SoundPresetsProps) {
+  const { t } = useLanguage()
+
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
         <Sparkles className="w-3.5 h-3.5 text-muted-foreground" />
         <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Quick Presets
+          {t('quickPresets')}
         </h3>
       </div>
 
       <div className="grid grid-cols-2 gap-2">
         {presets.map((preset) => {
           const isActive = currentPreset === preset.id
+          const presetName = presetNameKeys[preset.id] ? t(presetNameKeys[preset.id]) : preset.name
+
           return (
             <motion.div
               key={preset.id}
@@ -48,7 +63,7 @@ export function SoundPresets({ currentPreset, onSelectPreset }: SoundPresetsProp
                 <div className="flex items-center gap-2">
                   <span className="text-lg">{presetIcons[preset.id] || '🎵'}</span>
                   <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
-                    {preset.name}
+                    {presetName}
                   </span>
                 </div>
 

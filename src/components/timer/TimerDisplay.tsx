@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { formatTime } from '@/lib/utils'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { TimerMode } from '@/types'
 
 interface TimerDisplayProps {
@@ -9,29 +10,31 @@ interface TimerDisplayProps {
   isRunning: boolean
 }
 
-const modeConfig: Record<TimerMode, {
-  gradient: string
-  glowColor: string
-  label: string
-}> = {
-  work: {
-    gradient: 'from-orange-500 to-amber-500',
-    glowColor: 'orange',
-    label: 'Focus Time'
-  },
-  shortBreak: {
-    gradient: 'from-emerald-500 to-green-500',
-    glowColor: 'emerald',
-    label: 'Short Break'
-  },
-  longBreak: {
-    gradient: 'from-blue-500 to-cyan-500',
-    glowColor: 'blue',
-    label: 'Long Break'
-  }
-}
-
 export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: TimerDisplayProps) {
+  const { t } = useLanguage()
+
+  const modeConfig: Record<TimerMode, {
+    gradient: string
+    glowColor: string
+    labelKey: 'focusTime' | 'shortBreak' | 'longBreak'
+  }> = {
+    work: {
+      gradient: 'from-orange-500 to-amber-500',
+      glowColor: 'orange',
+      labelKey: 'focusTime'
+    },
+    shortBreak: {
+      gradient: 'from-emerald-500 to-green-500',
+      glowColor: 'emerald',
+      labelKey: 'shortBreak'
+    },
+    longBreak: {
+      gradient: 'from-blue-500 to-cyan-500',
+      glowColor: 'blue',
+      labelKey: 'longBreak'
+    }
+  }
+
   const config = modeConfig[mode]
   const circumference = 2 * Math.PI * 140
   const strokeDashoffset = circumference * (1 - progress)
@@ -94,7 +97,7 @@ export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: Timer
           animate={{ opacity: isRunning ? [0.5, 1, 0.5] : 1 }}
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
         >
-          {config.label}
+          {t(config.labelKey)}
         </motion.span>
 
         <motion.div
@@ -108,7 +111,7 @@ export function TimerDisplay({ timeRemaining, progress, mode, isRunning }: Timer
         </motion.div>
 
         <div className="mt-4 text-xs text-muted-foreground">
-          {isRunning ? 'Running' : 'Ready'}
+          {isRunning ? t('running') : t('ready')}
         </div>
       </div>
     </div>

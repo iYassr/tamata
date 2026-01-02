@@ -4,9 +4,11 @@ import { DailyStats } from './DailyStats'
 import { WeeklyChart } from './WeeklyChart'
 import { StreakCounter } from './StreakCounter'
 import { InsightsPanel } from './InsightsPanel'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export function Analytics() {
   const { todayStats, weeklyData, insights, isLoading, refreshAll } = useAnalyticsStore()
+  const { t } = useLanguage()
 
   useEffect(() => {
     refreshAll()
@@ -23,7 +25,7 @@ export function Analytics() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Today</h3>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">{t('today')}</h3>
         <DailyStats stats={todayStats} />
       </div>
 

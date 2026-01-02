@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BarChart3, Volume2, Keyboard, X, Timer as TimerIcon } from 'lucide-react'
+import { BarChart3, Volume2, Keyboard, X, Timer as TimerIcon, Globe } from 'lucide-react'
 import { Timer } from '@/components/timer/Timer'
 import { SoundMixer } from '@/components/ambiance/SoundMixer'
 import { Analytics } from '@/components/analytics/Analytics'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
+import { useLanguage } from '@/contexts/LanguageContext'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -41,7 +42,9 @@ function useIsMobile() {
 export default function App() {
   const [activePanel, setActivePanel] = useState<Panel>(null)
   const [showShortcuts, setShowShortcuts] = useState(false)
+  const [showLanguage, setShowLanguage] = useState(false)
   const isMobile = useIsMobile()
+  const { t, language, setLanguage, isRTL } = useLanguage()
 
   useKeyboardShortcuts()
 
@@ -50,7 +53,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
+    <div className={`min-h-screen flex flex-col lg:flex-row ${isRTL ? 'font-arabic' : ''}`}>
       {/* Main content */}
       <main className="flex-1 flex flex-col items-center justify-center p-6 lg:p-12 relative">
         {/* Header */}
@@ -60,28 +63,31 @@ export default function App() {
               <TimerIcon className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold tracking-tight">Tamata</h1>
-              <p className="text-xs text-muted-foreground">Focus Timer</p>
+              <h1 className="text-xl font-bold tracking-tight">{t('appName')}</h1>
+              <p className="text-xs text-muted-foreground">{t('appTagline')}</p>
             </div>
           </div>
 
-          <ToggleGroup type="single" value={activePanel || ''} className="gap-1">
-            <ToggleGroupItem
-              value="sounds"
-              onClick={() => togglePanel('sounds')}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
-            >
-              <Volume2 className="w-5 h-5" />
-              <span className="hidden sm:inline">Sounds</span>
-            </ToggleGroupItem>
-            <ToggleGroupItem
-              value="analytics"
-              onClick={() => togglePanel('analytics')}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
-            >
-              <BarChart3 className="w-5 h-5" />
-              <span className="hidden sm:inline">Stats</span>
-            </ToggleGroupItem>
+          <div className="flex items-center gap-2">
+            <ToggleGroup type="single" value={activePanel || ''} className="gap-1">
+              <ToggleGroupItem
+                value="sounds"
+                onClick={() => togglePanel('sounds')}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
+              >
+                <Volume2 className="w-5 h-5" />
+                <span className="hidden sm:inline">{t('sounds')}</span>
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="analytics"
+                onClick={() => togglePanel('analytics')}
+                className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
+              >
+                <BarChart3 className="w-5 h-5" />
+                <span className="hidden sm:inline">{t('stats')}</span>
+              </ToggleGroupItem>
+            </ToggleGroup>
+
             <Button
               variant={showShortcuts ? 'secondary' : 'ghost'}
               size="sm"
@@ -89,9 +95,19 @@ export default function App() {
               className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
             >
               <Keyboard className="w-5 h-5" />
-              <span className="hidden sm:inline">Keys</span>
+              <span className="hidden sm:inline">{t('keys')}</span>
             </Button>
-          </ToggleGroup>
+
+            <Button
+              variant={showLanguage ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setShowLanguage(!showLanguage)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
+            >
+              <Globe className="w-5 h-5" />
+              <span className="hidden sm:inline">{language === 'ar' ? 'ع' : 'EN'}</span>
+            </Button>
+          </div>
         </header>
 
         {/* Timer */}
@@ -103,13 +119,44 @@ export default function App() {
         <Dialog open={showShortcuts} onOpenChange={setShowShortcuts}>
           <DialogContent className="sm:max-w-sm">
             <DialogHeader>
-              <DialogTitle>Keyboard Shortcuts</DialogTitle>
+              <DialogTitle>{t('keyboardShortcuts')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-3 pt-2">
-              <ShortcutRow label="Start / Pause" shortcut="Space" />
-              <ShortcutRow label="Reset Timer" shortcut="R" />
-              <ShortcutRow label="Skip Session" shortcut="S" />
-              <ShortcutRow label="Close Modal" shortcut="Esc" />
+              <ShortcutRow label={t('startPause')} shortcut="Space" />
+              <ShortcutRow label={t('resetTimer')} shortcut="R" />
+              <ShortcutRow label={t('skipSession')} shortcut="S" />
+              <ShortcutRow label={t('closeModal')} shortcut="Esc" />
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Language dialog */}
+        <Dialog open={showLanguage} onOpenChange={setShowLanguage}>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>{t('language')}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 pt-2">
+              <Button
+                variant={language === 'en' ? 'default' : 'outline'}
+                className="w-full justify-start"
+                onClick={() => {
+                  setLanguage('en')
+                  setShowLanguage(false)
+                }}
+              >
+                🇺🇸 {t('english')}
+              </Button>
+              <Button
+                variant={language === 'ar' ? 'default' : 'outline'}
+                className="w-full justify-start"
+                onClick={() => {
+                  setLanguage('ar')
+                  setShowLanguage(false)
+                }}
+              >
+                🇸🇦 {t('arabic')}
+              </Button>
             </div>
           </DialogContent>
         </Dialog>
@@ -118,10 +165,10 @@ export default function App() {
       {/* Mobile Sheet - only render on mobile */}
       {isMobile && (
         <Sheet open={activePanel !== null} onOpenChange={(open) => !open && setActivePanel(null)}>
-          <SheetContent side="right" className="w-full max-w-md p-0">
+          <SheetContent side={isRTL ? 'left' : 'right'} className="w-full max-w-md p-0">
             <SheetHeader className="border-b border-border p-4">
               <SheetTitle>
-                {activePanel === 'sounds' ? 'Ambient Sounds' : 'Analytics'}
+                {activePanel === 'sounds' ? t('ambientSounds') : t('analytics')}
               </SheetTitle>
             </SheetHeader>
             <div className="p-4 overflow-y-auto h-[calc(100vh-60px)]">
@@ -137,16 +184,16 @@ export default function App() {
         <AnimatePresence>
           {activePanel && (
             <motion.aside
-              initial={{ x: '100%' }}
+              initial={{ x: isRTL ? '-100%' : '100%' }}
               animate={{ x: 0 }}
-              exit={{ x: '100%' }}
+              exit={{ x: isRTL ? '-100%' : '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 bottom-0 w-96 z-50"
+              className={`fixed ${isRTL ? 'left-0' : 'right-0'} top-0 bottom-0 w-96 z-50`}
             >
-              <div className="h-full border-l border-border bg-card/95 backdrop-blur-sm flex flex-col">
+              <div className={`h-full ${isRTL ? 'border-r' : 'border-l'} border-border bg-card/95 backdrop-blur-sm flex flex-col`}>
                 <div className="sticky top-0 z-10 border-b border-border bg-card/95 backdrop-blur-sm flex items-center justify-between p-4">
                   <h2 className="font-semibold">
-                    {activePanel === 'sounds' ? 'Ambient Sounds' : 'Analytics'}
+                    {activePanel === 'sounds' ? t('ambientSounds') : t('analytics')}
                   </h2>
                   <Button
                     variant="ghost"

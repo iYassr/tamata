@@ -1,5 +1,6 @@
 import { Flame, Trophy } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface StreakCounterProps {
   currentStreak: number
@@ -7,6 +8,8 @@ interface StreakCounterProps {
 }
 
 export function StreakCounter({ currentStreak, longestStreak }: StreakCounterProps) {
+  const { t } = useLanguage()
+
   return (
     <div className="grid grid-cols-2 gap-2">
       <motion.div whileHover={{ scale: 1.02 }}>
@@ -17,7 +20,7 @@ export function StreakCounter({ currentStreak, longestStreak }: StreakCounterPro
             </div>
             <div>
               <div className="text-2xl font-bold">{currentStreak}</div>
-              <div className="text-xs text-muted-foreground">Day Streak</div>
+              <div className="text-xs text-muted-foreground">{t('dayStreak')}</div>
             </div>
           </div>
         </div>
@@ -31,7 +34,7 @@ export function StreakCounter({ currentStreak, longestStreak }: StreakCounterPro
             </div>
             <div>
               <div className="text-2xl font-bold">{longestStreak}</div>
-              <div className="text-xs text-muted-foreground">Best Streak</div>
+              <div className="text-xs text-muted-foreground">{t('bestStreak')}</div>
             </div>
           </div>
         </div>

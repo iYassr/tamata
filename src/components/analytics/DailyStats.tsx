@@ -1,5 +1,6 @@
 import { Clock, Target, Coffee } from 'lucide-react'
 import { formatMinutes } from '@/lib/utils'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { DailyStats as DailyStatsType } from '@/types'
 
 interface DailyStatsProps {
@@ -7,6 +8,7 @@ interface DailyStatsProps {
 }
 
 export function DailyStats({ stats }: DailyStatsProps) {
+  const { t } = useLanguage()
   const focusMinutes = Math.round(stats.focusTime / 60)
   const breakMinutes = Math.round(stats.breakTime / 60)
 
@@ -15,19 +17,19 @@ export function DailyStats({ stats }: DailyStatsProps) {
       <StatCard
         icon={<Clock className="w-4 h-4" />}
         value={formatMinutes(focusMinutes)}
-        label="Focus"
+        label={t('focusStat')}
         color="orange"
       />
       <StatCard
         icon={<Target className="w-4 h-4" />}
         value={stats.sessionsCompleted.toString()}
-        label="Sessions"
+        label={t('sessionsStat')}
         color="green"
       />
       <StatCard
         icon={<Coffee className="w-4 h-4" />}
         value={formatMinutes(breakMinutes)}
-        label="Break"
+        label={t('breakStat')}
         color="blue"
       />
     </div>

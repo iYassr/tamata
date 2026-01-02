@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Play, Pause, RotateCcw, SkipForward } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useLanguage } from '@/contexts/LanguageContext'
 import {
   Tooltip,
   TooltipContent,
@@ -16,6 +17,8 @@ interface TimerControlsProps {
 }
 
 export function TimerControls({ isRunning, onToggle, onReset, onSkip }: TimerControlsProps) {
+  const { t } = useLanguage()
+
   return (
     <TooltipProvider>
       <div className="flex items-center gap-4">
@@ -31,7 +34,7 @@ export function TimerControls({ isRunning, onToggle, onReset, onSkip }: TimerCon
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Reset (R)</p>
+            <p>{t('reset')} (R)</p>
           </TooltipContent>
         </Tooltip>
 
@@ -51,7 +54,7 @@ export function TimerControls({ isRunning, onToggle, onReset, onSkip }: TimerCon
               {isRunning ? (
                 <Pause className="h-8 w-8" />
               ) : (
-                <Play className="h-8 w-8 ml-1" />
+                <Play className="h-8 w-8 ms-1" />
               )}
             </motion.div>
           </Button>
@@ -69,7 +72,7 @@ export function TimerControls({ isRunning, onToggle, onReset, onSkip }: TimerCon
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            <p>Skip (S)</p>
+            <p>{t('skip')} (S)</p>
           </TooltipContent>
         </Tooltip>
       </div>

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Badge } from '@/components/ui/badge'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface SessionIndicatorProps {
   currentSession: number
@@ -9,6 +10,7 @@ interface SessionIndicatorProps {
 
 export function SessionIndicator({ currentSession, totalCompleted }: SessionIndicatorProps) {
   const longBreakInterval = useSettingsStore(s => s.longBreakInterval)
+  const { t } = useLanguage()
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -51,8 +53,8 @@ export function SessionIndicator({ currentSession, totalCompleted }: SessionIndi
 
       {/* Stats */}
       <Badge variant="secondary" className="gap-2">
-        <span className="text-muted-foreground">Today:</span>
-        <span className="font-semibold">{totalCompleted} sessions</span>
+        <span className="text-muted-foreground">{t('today')}:</span>
+        <span className="font-semibold">{totalCompleted} {t('sessions')}</span>
       </Badge>
     </div>
   )

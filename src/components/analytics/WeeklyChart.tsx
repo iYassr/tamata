@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
   Cell
 } from 'recharts'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { WeeklyData } from '@/types'
 
 interface WeeklyChartProps {
@@ -14,12 +15,13 @@ interface WeeklyChartProps {
 }
 
 export function WeeklyChart({ data }: WeeklyChartProps) {
-  const today = new Date().toLocaleDateString('en-US', { weekday: 'short' })
+  const { t, language } = useLanguage()
+  const today = new Date().toLocaleDateString(language === 'ar' ? 'ar-SA' : 'en-US', { weekday: 'short' })
 
   return (
     <div className="p-4 rounded-xl border bg-card">
       <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-        This Week
+        {t('thisWeek')}
       </h3>
       <div className="h-40">
         <ResponsiveContainer width="100%" height="100%">
@@ -46,7 +48,7 @@ export function WeeklyChart({ data }: WeeklyChartProps) {
               }}
               labelStyle={{ color: 'hsl(var(--foreground))', marginBottom: '4px', fontWeight: 600 }}
               itemStyle={{ color: 'hsl(var(--muted-foreground))' }}
-              formatter={(value) => [`${value} min`, 'Focus']}
+              formatter={(value) => [`${value} min`, t('focusStat')]}
               cursor={{ fill: 'hsl(var(--primary) / 0.1)' }}
             />
             <Bar dataKey="focusMinutes" radius={[4, 4, 0, 0]}>
