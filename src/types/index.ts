@@ -57,8 +57,6 @@ export interface Sound {
   name: string
   icon: string
   category: 'rain' | 'nature' | 'ambient' | 'noise'
-  src: string
-  loop: boolean
 }
 
 export interface SoundPreset {

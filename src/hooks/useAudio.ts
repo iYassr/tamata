@@ -1,59 +1,46 @@
-import { useEffect, useRef, useCallback } from 'react'
-import { Howl } from 'howler'
+import { useEffect, useCallback } from 'react'
 import { useSettingsStore } from '../stores/settingsStore'
-import { sounds as soundList, getPresetById } from '../lib/sounds'
-
-interface HowlInstance {
-  howl: Howl
-  id: number | undefined
-}
+import { audioGenerator } from '../lib/audioGenerator'
+import { getPresetById } from '../lib/sounds'
 
 export function useAudio() {
-  const howlsRef = useRef<Map<string, HowlInstance>>(new Map())
   const { sound, setSoundVolume, toggleSound, applyPreset, clearAllSounds, setMasterVolume } = useSettingsStore()
 
-  // Initialize all sounds
+  // Update master volume
   useEffect(() => {
-    soundList.forEach(s => {
-      const howl = new Howl({
-        src: [s.src],
-        loop: s.loop,
-        volume: 0,
-        preload: true,
-        html5: true // Better for long audio files
-      })
-      howlsRef.current.set(s.id, { howl, id: undefined })
-    })
+    audioGenerator.setMasterVolume(sound.masterVolume)
+  }, [sound.masterVolume])
 
-    return () => {
-      howlsRef.current.forEach(({ howl }) => {
-        howl.unload()
-      })
-      howlsRef.current.clear()
-    }
-  }, [])
-
-  // Update volumes and play/stop based on active sounds
+  // Update individual sound volumes and play/stop
   useEffect(() => {
-    howlsRef.current.forEach((instance, soundId) => {
+    // Get all sound IDs we know about
+    const allSoundIds = [
+      'rain-light', 'rain-heavy', 'thunder',
+      'forest', 'ocean', 'birds', 'fire',
+      'cafe', 'lofi',
+      'white-noise', 'pink-noise', 'brown-noise'
+    ]
+
+    allSoundIds.forEach(soundId => {
       const volume = sound.activeSounds[soundId]
-      const effectiveVolume = volume !== undefined ? volume * sound.masterVolume : 0
 
-      if (effectiveVolume > 0) {
-        instance.howl.volume(effectiveVolume)
-        if (!instance.howl.playing()) {
-          instance.id = instance.howl.play()
-        }
+      if (volume !== undefined && volume > 0) {
+        // Sound should be playing
+        const effectiveVolume = volume * sound.masterVolume
+        audioGenerator.play(soundId, effectiveVolume)
       } else {
-        if (instance.howl.playing()) {
-          instance.howl.fade(instance.howl.volume(), 0, 300)
-          setTimeout(() => {
-            instance.howl.stop()
-          }, 300)
-        }
+        // Sound should be stopped
+        audioGenerator.stop(soundId)
       }
     })
   }, [sound.activeSounds, sound.masterVolume])
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      audioGenerator.stopAll()
+    }
+  }, [])
 
   const setVolume = useCallback((soundId: string, volume: number) => {
     setSoundVolume(soundId, volume)
@@ -66,11 +53,14 @@ export function useAudio() {
   const selectPreset = useCallback((presetId: string) => {
     const preset = getPresetById(presetId)
     if (preset) {
+      // Stop all current sounds first
+      audioGenerator.stopAll()
       applyPreset(presetId, preset.sounds)
     }
   }, [applyPreset])
 
   const stopAll = useCallback(() => {
+    audioGenerator.stopAll()
     clearAllSounds()
   }, [clearAllSounds])
 
