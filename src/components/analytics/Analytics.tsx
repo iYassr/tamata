@@ -15,15 +15,17 @@ export function Analytics() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-48">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold">Today</h2>
-      <DailyStats stats={todayStats} />
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-500 mb-3">Today</h3>
+        <DailyStats stats={todayStats} />
+      </div>
 
       <StreakCounter
         currentStreak={insights.currentStreak}
