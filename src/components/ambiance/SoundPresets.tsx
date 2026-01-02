@@ -1,7 +1,6 @@
 import { motion } from 'framer-motion'
 import { Sparkles } from 'lucide-react'
 import { presets } from '@/lib/sounds'
-import { Card, CardContent } from '@/components/ui/card'
 
 interface SoundPresetsProps {
   currentPreset: string | null
@@ -36,33 +35,31 @@ export function SoundPresets({ currentPreset, onSelectPreset }: SoundPresetsProp
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Card
+              <div
                 className={`
-                  cursor-pointer transition-all overflow-hidden py-0
+                  cursor-pointer transition-all overflow-hidden rounded-xl border p-3 relative
                   ${isActive
                     ? 'border-primary bg-primary/10'
-                    : 'border-border hover:border-primary/50 hover:bg-secondary/50'
+                    : 'border-border hover:border-primary/50 hover:bg-secondary/50 bg-card'
                   }
                 `}
                 onClick={() => onSelectPreset(preset.id)}
               >
-                <CardContent className="p-3 relative">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">{presetIcons[preset.id] || '🎵'}</span>
-                    <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
-                      {preset.name}
-                    </span>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">{presetIcons[preset.id] || '🎵'}</span>
+                  <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                    {preset.name}
+                  </span>
+                </div>
 
-                  {isActive && (
-                    <motion.div
-                      layoutId="activePreset"
-                      className="absolute inset-0 border-2 border-primary/50 rounded-xl pointer-events-none"
-                      transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
-                    />
-                  )}
-                </CardContent>
-              </Card>
+                {isActive && (
+                  <motion.div
+                    layoutId="activePreset"
+                    className="absolute inset-0 border-2 border-primary/50 rounded-xl pointer-events-none"
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.4 }}
+                  />
+                )}
+              </div>
             </motion.div>
           )
         })}

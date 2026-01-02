@@ -6,7 +6,6 @@ import { SoundPresets } from './SoundPresets'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 
 const categories = [
@@ -79,24 +78,22 @@ export function SoundMixer() {
       </div>
 
       {/* Master Volume */}
-      <Card className="bg-secondary/30">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between text-sm mb-3">
-            <span className="text-muted-foreground flex items-center gap-2">
-              <Volume2 className="w-4 h-4" />
-              Master Volume
-            </span>
-            <Badge variant="secondary">{Math.round(masterVolume * 100)}%</Badge>
-          </div>
-          <Slider
-            value={[masterVolume * 100]}
-            onValueChange={([value]) => setMasterVolume(value / 100)}
-            max={100}
-            step={1}
-            className="w-full"
-          />
-        </CardContent>
-      </Card>
+      <div className="p-4 rounded-xl border bg-secondary/30">
+        <div className="flex items-center justify-between text-sm mb-3">
+          <span className="text-muted-foreground flex items-center gap-2">
+            <Volume2 className="w-4 h-4" />
+            Master Volume
+          </span>
+          <Badge variant="secondary">{Math.round(masterVolume * 100)}%</Badge>
+        </div>
+        <Slider
+          value={[masterVolume * 100]}
+          onValueChange={([value]) => setMasterVolume(value / 100)}
+          max={100}
+          step={1}
+          className="w-full"
+        />
+      </div>
 
       {/* Presets */}
       <SoundPresets
@@ -126,47 +123,46 @@ export function SoundMixer() {
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Card
+                    <div
                       className={`
-                        cursor-pointer transition-all overflow-hidden py-0
+                        cursor-pointer transition-all overflow-hidden rounded-xl border
+                        aspect-square flex flex-col items-center justify-center gap-1 relative
                         ${isActive
                           ? 'border-primary bg-primary/10 shadow-lg shadow-primary/10'
-                          : 'border-border hover:border-primary/50 hover:bg-secondary/50'
+                          : 'border-border hover:border-primary/50 hover:bg-secondary/50 bg-card'
                         }
                       `}
                       onClick={() => toggle(sound.id)}
                     >
-                      <CardContent className="p-0 aspect-square flex flex-col items-center justify-center gap-1 relative">
-                        <span className="text-2xl">{sound.icon}</span>
-                        <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
-                          {sound.name}
-                        </span>
+                      <span className="text-2xl">{sound.icon}</span>
+                      <span className={`text-[10px] font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                        {sound.name}
+                      </span>
 
-                        {/* Volume indicator */}
-                        {isActive && (
-                          <div className="absolute bottom-1.5 left-1.5 right-1.5">
-                            <div className="h-1 bg-muted rounded-full overflow-hidden">
-                              <motion.div
-                                className="h-full bg-primary rounded-full"
-                                initial={{ width: 0 }}
-                                animate={{ width: `${volume * 100}%` }}
-                              />
-                            </div>
+                      {/* Volume indicator */}
+                      {isActive && (
+                        <div className="absolute bottom-1.5 left-1.5 right-1.5">
+                          <div className="h-1 bg-muted rounded-full overflow-hidden">
+                            <motion.div
+                              className="h-full bg-primary rounded-full"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${volume * 100}%` }}
+                            />
                           </div>
-                        )}
+                        </div>
+                      )}
 
-                        {/* Playing indicator */}
-                        {isActive && (
-                          <motion.div
-                            className="absolute top-2 right-2"
-                            animate={{ opacity: [1, 0.5, 1] }}
-                            transition={{ duration: 1.5, repeat: Infinity }}
-                          >
-                            <div className="w-2 h-2 rounded-full bg-primary" />
-                          </motion.div>
-                        )}
-                      </CardContent>
-                    </Card>
+                      {/* Playing indicator */}
+                      {isActive && (
+                        <motion.div
+                          className="absolute top-2 right-2"
+                          animate={{ opacity: [1, 0.5, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                        >
+                          <div className="w-2 h-2 rounded-full bg-primary" />
+                        </motion.div>
+                      )}
+                    </div>
 
                     {/* Volume slider overlay */}
                     {isActive && (
