@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react'
-import { useSettingsStore } from '../stores/settingsStore'
-import { audioGenerator } from '../lib/audioGenerator'
-import { getPresetById } from '../lib/sounds'
+import { useSettingsStore } from '@/stores/settingsStore'
+import { audioGenerator } from '@/lib/audioGenerator'
+import { getPresetById } from '@/lib/sounds'
 
 export function useAudio() {
   const { sound, setSoundVolume, toggleSound, applyPreset, clearAllSounds, setMasterVolume } = useSettingsStore()

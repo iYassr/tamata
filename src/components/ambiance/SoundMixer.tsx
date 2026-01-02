@@ -128,7 +128,7 @@ export function SoundMixer() {
                   >
                     <Card
                       className={`
-                        cursor-pointer transition-all overflow-hidden
+                        cursor-pointer transition-all overflow-hidden py-0
                         ${isActive
                           ? 'border-primary bg-primary/10 shadow-lg shadow-primary/10'
                           : 'border-border hover:border-primary/50 hover:bg-secondary/50'

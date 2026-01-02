@@ -38,7 +38,7 @@ export function SoundPresets({ currentPreset, onSelectPreset }: SoundPresetsProp
             >
               <Card
                 className={`
-                  cursor-pointer transition-all overflow-hidden
+                  cursor-pointer transition-all overflow-hidden py-0
                   ${isActive
                     ? 'border-primary bg-primary/10'
                     : 'border-border hover:border-primary/50 hover:bg-secondary/50'
