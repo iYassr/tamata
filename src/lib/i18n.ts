@@ -91,6 +91,10 @@ export const translations = {
     language: 'Language',
     english: 'English',
     arabic: 'العربية',
+
+    // Random sound
+    randomSound: 'Random Sound',
+    playingRandom: 'Playing',
   },
   ar: {
     // App
@@ -182,6 +186,10 @@ export const translations = {
     language: 'اللغة',
     english: 'English',
     arabic: 'العربية',
+
+    // Random sound
+    randomSound: 'صوت عشوائي',
+    playingRandom: 'يعمل',
   },
 } as const
 

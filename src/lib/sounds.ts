@@ -63,3 +63,8 @@ export function getSoundsByCategory(category: Sound['category']): Sound[] {
 export function getPresetById(id: string): SoundPreset | undefined {
   return presets.find(p => p.id === id)
 }
+
+export function getRandomSound(): Sound {
+  const randomIndex = Math.floor(Math.random() * sounds.length)
+  return sounds[randomIndex]
+}

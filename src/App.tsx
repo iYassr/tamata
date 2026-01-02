@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BarChart3, Volume2, Keyboard, X, Timer as TimerIcon, Globe } from 'lucide-react'
+import { BarChart3, Volume2, Keyboard, X, Timer as TimerIcon, Globe, Shuffle } from 'lucide-react'
 import { Timer } from '@/components/timer/Timer'
 import { SoundMixer } from '@/components/ambiance/SoundMixer'
 import { Analytics } from '@/components/analytics/Analytics'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useAudio } from '@/hooks/useAudio'
+import { getRandomSound } from '@/lib/sounds'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -43,10 +45,21 @@ export default function App() {
   const [activePanel, setActivePanel] = useState<Panel>(null)
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showLanguage, setShowLanguage] = useState(false)
+  const [currentRandomSound, setCurrentRandomSound] = useState<{ id: string; name: string; icon: string } | null>(null)
   const isMobile = useIsMobile()
   const { t, language, setLanguage, isRTL } = useLanguage()
+  const { toggle, activeSounds, stopAll } = useAudio()
 
   useKeyboardShortcuts()
+
+  const handleRandomSound = () => {
+    // Stop all current sounds first
+    stopAll()
+    // Get a random sound and play it
+    const randomSound = getRandomSound()
+    toggle(randomSound.id)
+    setCurrentRandomSound({ id: randomSound.id, name: randomSound.name, icon: randomSound.icon })
+  }
 
   const togglePanel = (panel: Panel) => {
     setActivePanel(activePanel === panel ? null : panel)
@@ -114,6 +127,33 @@ export default function App() {
         <div className="mt-16 lg:mt-0">
           <Timer />
         </div>
+
+        {/* Random Sound Button */}
+        <motion.div
+          className="mt-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleRandomSound}
+            className="flex items-center gap-3 px-6 py-3 rounded-2xl border-2 hover:border-primary/50 hover:bg-primary/5 transition-all"
+          >
+            <Shuffle className="w-5 h-5" />
+            <span>{t('randomSound')}</span>
+            {currentRandomSound && activeSounds[currentRandomSound.id] && (
+              <motion.span
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-1 text-primary"
+              >
+                <span>{currentRandomSound.icon}</span>
+              </motion.span>
+            )}
+          </Button>
+        </motion.div>
 
         {/* Keyboard shortcuts dialog */}
         <Dialog open={showShortcuts} onOpenChange={setShowShortcuts}>
