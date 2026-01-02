@@ -21,8 +21,11 @@ const soundFiles: Record<string, string> = {
   'ocean': '/sounds/ocean.mp3',
   'birds': '/sounds/birds.mp3',
   'fire': '/sounds/fire.mp3',
+  'wind': '/sounds/wind.mp3',
   'cafe': '/sounds/cafe.mp3',
-  'lofi': '/sounds/cafe.mp3', // Use cafe as placeholder for lofi
+  'library': '/sounds/library.mp3',
+  'train': '/sounds/train.mp3',
+  'typing': '/sounds/typing.mp3',
 }
 
 class AudioManager {

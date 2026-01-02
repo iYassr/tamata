@@ -1,11 +1,12 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AppSettings, SoundSettings } from '../types'
+import type { AppSettings, SoundSettings, UserSoundPreset } from '../types'
 
 const defaultSoundSettings: SoundSettings = {
   masterVolume: 0.7,
   activeSounds: {},
-  preset: null
+  preset: null,
+  userPresets: []
 }
 
 const defaultSettings: AppSettings = {
@@ -34,6 +35,9 @@ interface SettingsStore extends AppSettings {
   toggleSound: (soundId: string) => void
   applyPreset: (presetId: string, sounds: Record<string, number>) => void
   clearAllSounds: () => void
+  saveUserPreset: (name: string) => void
+  deleteUserPreset: (presetId: string) => void
+  applyUserPreset: (preset: UserSoundPreset) => void
   resetSettings: () => void
 }
 
@@ -81,6 +85,37 @@ export const useSettingsStore = create<SettingsStore>()(
 
       clearAllSounds: () => set((state) => ({
         sound: { ...state.sound, activeSounds: {}, preset: null }
+      })),
+
+      saveUserPreset: (name) => set((state) => {
+        const newPreset: UserSoundPreset = {
+          id: `user-${Date.now()}`,
+          name,
+          sounds: { ...state.sound.activeSounds }
+        }
+        return {
+          sound: {
+            ...state.sound,
+            userPresets: [...state.sound.userPresets, newPreset],
+            preset: newPreset.id
+          }
+        }
+      }),
+
+      deleteUserPreset: (presetId) => set((state) => ({
+        sound: {
+          ...state.sound,
+          userPresets: state.sound.userPresets.filter(p => p.id !== presetId),
+          preset: state.sound.preset === presetId ? null : state.sound.preset
+        }
+      })),
+
+      applyUserPreset: (preset) => set((state) => ({
+        sound: {
+          ...state.sound,
+          activeSounds: { ...preset.sounds },
+          preset: preset.id
+        }
       })),
 
       resetSettings: () => set(defaultSettings)

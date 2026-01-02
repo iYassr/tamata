@@ -1,4 +1,5 @@
-import { Volume2, VolumeX, Waves } from 'lucide-react'
+import { useState } from 'react'
+import { Volume2, VolumeX, Waves, Plus, X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAudio } from '@/hooks/useAudio'
 import { getSoundsByCategory } from '@/lib/sounds'
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Input } from '@/components/ui/input'
 import { useLanguage } from '@/contexts/LanguageContext'
 import type { TranslationKey } from '@/lib/i18n'
 
@@ -25,8 +27,11 @@ const soundNameKeys: Record<string, TranslationKey> = {
   'ocean': 'oceanWaves',
   'birds': 'birds',
   'fire': 'fireplace',
+  'wind': 'wind',
   'cafe': 'coffeeShop',
-  'lofi': 'lofiBeats',
+  'library': 'library',
+  'train': 'train',
+  'typing': 'typing',
   'white-noise': 'whiteNoise',
   'pink-noise': 'pinkNoise',
   'brown-noise': 'brownNoise'
@@ -37,15 +42,29 @@ export function SoundMixer() {
     activeSounds,
     masterVolume,
     currentPreset,
+    userPresets,
     setVolume,
     toggle,
     selectPreset,
     stopAll,
-    setMasterVolume
+    setMasterVolume,
+    savePreset,
+    deletePreset,
+    selectUserPreset
   } = useAudio()
 
   const { t } = useLanguage()
+  const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [presetName, setPresetName] = useState('')
   const activeCount = Object.keys(activeSounds).length
+
+  const handleSavePreset = () => {
+    if (presetName.trim() && activeCount > 0) {
+      savePreset(presetName.trim())
+      setPresetName('')
+      setShowSaveDialog(false)
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -121,6 +140,116 @@ export function SoundMixer() {
         currentPreset={currentPreset}
         onSelectPreset={selectPreset}
       />
+
+      {/* User Presets */}
+      {userPresets.length > 0 && (
+        <div>
+          <h3 className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-3">
+            {t('myPresets')}
+          </h3>
+          <div className="grid grid-cols-2 gap-2">
+            {userPresets.map((preset) => {
+              const isActive = currentPreset === preset.id
+              return (
+                <motion.div
+                  key={preset.id}
+                  className="relative group"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div
+                    className={`
+                      cursor-pointer transition-all overflow-hidden rounded-xl border p-3
+                      ${isActive
+                        ? 'border-primary bg-primary/10'
+                        : 'border-border hover:border-primary/50 hover:bg-secondary/50 bg-card'
+                      }
+                    `}
+                    onClick={() => selectUserPreset(preset)}
+                  >
+                    <span className={`text-sm font-medium ${isActive ? 'text-primary' : 'text-muted-foreground'}`}>
+                      {preset.name}
+                    </span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute -top-1 -right-1 h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity bg-destructive/80 hover:bg-destructive text-white rounded-full"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      deletePreset(preset.id)
+                    }}
+                  >
+                    <X className="w-3 h-3" />
+                  </Button>
+                </motion.div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Save Preset Button/Dialog */}
+      {activeCount > 0 && (
+        <AnimatePresence mode="wait">
+          {showSaveDialog ? (
+            <motion.div
+              key="dialog"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="p-3 rounded-xl border bg-card"
+            >
+              <div className="space-y-3">
+                <Input
+                  placeholder={t('presetName')}
+                  value={presetName}
+                  onChange={(e) => setPresetName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleSavePreset()}
+                  autoFocus
+                />
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    onClick={handleSavePreset}
+                    disabled={!presetName.trim()}
+                    className="flex-1"
+                  >
+                    {t('save')}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setShowSaveDialog(false)
+                      setPresetName('')
+                    }}
+                  >
+                    {t('cancel')}
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="button"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowSaveDialog(true)}
+                className="w-full"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                {t('savePreset')}
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
 
       <Separator />
 

@@ -10,9 +10,12 @@ export const sounds: Sound[] = [
   { id: 'ocean', name: 'Ocean Waves', icon: '🌊', category: 'nature' },
   { id: 'birds', name: 'Birds', icon: '🐦', category: 'nature' },
   { id: 'fire', name: 'Fireplace', icon: '🔥', category: 'nature' },
+  { id: 'wind', name: 'Wind', icon: '💨', category: 'nature' },
   // Ambient
   { id: 'cafe', name: 'Coffee Shop', icon: '☕', category: 'ambient' },
-  { id: 'lofi', name: 'Lo-Fi Beats', icon: '🎵', category: 'ambient' },
+  { id: 'library', name: 'Library', icon: '📚', category: 'ambient' },
+  { id: 'train', name: 'Train', icon: '🚂', category: 'ambient' },
+  { id: 'typing', name: 'Typing', icon: '⌨️', category: 'ambient' },
   // Noise
   { id: 'white-noise', name: 'White Noise', icon: '📻', category: 'noise' },
   { id: 'pink-noise', name: 'Pink Noise', icon: '🎀', category: 'noise' },
@@ -46,9 +49,9 @@ export const presets: SoundPreset[] = [
     sounds: { 'brown-noise': 0.5 }
   },
   {
-    id: 'lofi-rain',
-    name: 'Lo-Fi & Rain',
-    sounds: { 'lofi': 0.5, 'rain-light': 0.3 }
+    id: 'train-journey',
+    name: 'Train Journey',
+    sounds: { 'train': 0.6, 'rain-light': 0.3 }
   }
 ]
 

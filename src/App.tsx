@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { BarChart3, Volume2, Keyboard, X, Timer as TimerIcon, Globe, Shuffle } from 'lucide-react'
+import { BarChart3, Volume2, Keyboard, X, Timer as TimerIcon, Globe, Shuffle, Sun, Moon, Monitor } from 'lucide-react'
 import { Timer } from '@/components/timer/Timer'
 import { SoundMixer } from '@/components/ambiance/SoundMixer'
 import { Analytics } from '@/components/analytics/Analytics'
+import { QuoteDisplay } from '@/components/Quote'
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { useAudio } from '@/hooks/useAudio'
+import { useTheme } from '@/hooks/useTheme'
 import { getRandomSound } from '@/lib/sounds'
 import { Button } from '@/components/ui/button'
 import {
@@ -46,9 +48,11 @@ export default function App() {
   const [showShortcuts, setShowShortcuts] = useState(false)
   const [showLanguage, setShowLanguage] = useState(false)
   const [currentRandomSound, setCurrentRandomSound] = useState<{ id: string; name: string; icon: string } | null>(null)
+  const [showTheme, setShowTheme] = useState(false)
   const isMobile = useIsMobile()
   const { t, language, setLanguage, isRTL } = useLanguage()
   const { toggle, activeSounds, stopAll } = useAudio()
+  const { theme, setTheme } = useTheme()
 
   useKeyboardShortcuts()
 
@@ -112,6 +116,15 @@ export default function App() {
             </Button>
 
             <Button
+              variant={showTheme ? 'secondary' : 'ghost'}
+              size="sm"
+              onClick={() => setShowTheme(!showTheme)}
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium"
+            >
+              {theme === 'dark' ? <Moon className="w-5 h-5" /> : theme === 'light' ? <Sun className="w-5 h-5" /> : <Monitor className="w-5 h-5" />}
+            </Button>
+
+            <Button
               variant={showLanguage ? 'secondary' : 'ghost'}
               size="sm"
               onClick={() => setShowLanguage(!showLanguage)}
@@ -155,6 +168,11 @@ export default function App() {
           </Button>
         </motion.div>
 
+        {/* Daily Quote */}
+        <div className="mt-8">
+          <QuoteDisplay />
+        </div>
+
         {/* Keyboard shortcuts dialog */}
         <Dialog open={showShortcuts} onOpenChange={setShowShortcuts}>
           <DialogContent className="sm:max-w-sm">
@@ -196,6 +214,47 @@ export default function App() {
                 }}
               >
                 🇸🇦 {t('arabic')}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Theme dialog */}
+        <Dialog open={showTheme} onOpenChange={setShowTheme}>
+          <DialogContent className="sm:max-w-sm">
+            <DialogHeader>
+              <DialogTitle>{t('theme')}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-2 pt-2">
+              <Button
+                variant={theme === 'light' ? 'default' : 'outline'}
+                className="w-full justify-start gap-3"
+                onClick={() => {
+                  setTheme('light')
+                  setShowTheme(false)
+                }}
+              >
+                <Sun className="w-4 h-4" /> {t('light')}
+              </Button>
+              <Button
+                variant={theme === 'dark' ? 'default' : 'outline'}
+                className="w-full justify-start gap-3"
+                onClick={() => {
+                  setTheme('dark')
+                  setShowTheme(false)
+                }}
+              >
+                <Moon className="w-4 h-4" /> {t('dark')}
+              </Button>
+              <Button
+                variant={theme === 'system' ? 'default' : 'outline'}
+                className="w-full justify-start gap-3"
+                onClick={() => {
+                  setTheme('system')
+                  setShowTheme(false)
+                }}
+              >
+                <Monitor className="w-4 h-4" /> {t('system')}
               </Button>
             </div>
           </DialogContent>

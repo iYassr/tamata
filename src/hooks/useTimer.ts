@@ -4,6 +4,13 @@ import { useSettingsStore } from '../stores/settingsStore'
 import { useAnalyticsStore } from '../stores/analyticsStore'
 import { useNotifications } from './useNotifications'
 
+// Helper to format time for tab title
+function formatTimeForTitle(seconds: number): string {
+  const mins = Math.floor(seconds / 60)
+  const secs = seconds % 60
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+}
+
 export function useTimer() {
   const workerRef = useRef<Worker | null>(null)
   const startTimeRef = useRef<number>(0)
@@ -99,6 +106,25 @@ export function useTimer() {
       })
     }
   }, [mode, settings.workDuration, settings.shortBreakDuration, settings.longBreakDuration])
+
+  // Update browser tab title with timer
+  useEffect(() => {
+    const modeEmoji = mode === 'work' ? '🍅' : '☕'
+    const timeStr = formatTimeForTitle(timeRemaining)
+
+    if (status === 'running') {
+      document.title = `${timeStr} ${modeEmoji} Tamata`
+    } else if (status === 'paused') {
+      document.title = `⏸ ${timeStr} - Tamata`
+    } else {
+      document.title = 'Tamata - Focus Timer'
+    }
+
+    // Cleanup: reset title when component unmounts
+    return () => {
+      document.title = 'Tamata - Focus Timer'
+    }
+  }, [timeRemaining, status, mode])
 
   const toggle = useCallback(() => {
     if (status === 'running') {

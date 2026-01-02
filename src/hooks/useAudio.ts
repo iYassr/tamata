@@ -2,9 +2,10 @@ import { useEffect, useCallback } from 'react'
 import { useSettingsStore } from '@/stores/settingsStore'
 import { audioGenerator } from '@/lib/audioGenerator'
 import { getPresetById } from '@/lib/sounds'
+import type { UserSoundPreset } from '@/types'
 
 export function useAudio() {
-  const { sound, setSoundVolume, toggleSound, applyPreset, clearAllSounds, setMasterVolume } = useSettingsStore()
+  const { sound, setSoundVolume, toggleSound, applyPreset, clearAllSounds, setMasterVolume, saveUserPreset, deleteUserPreset, applyUserPreset } = useSettingsStore()
 
   // Update master volume
   useEffect(() => {
@@ -16,8 +17,8 @@ export function useAudio() {
     // Get all sound IDs we know about
     const allSoundIds = [
       'rain-light', 'rain-heavy', 'thunder',
-      'forest', 'ocean', 'birds', 'fire',
-      'cafe', 'lofi',
+      'forest', 'ocean', 'birds', 'fire', 'wind',
+      'cafe', 'library', 'train', 'typing',
       'white-noise', 'pink-noise', 'brown-noise'
     ]
 
@@ -64,14 +65,31 @@ export function useAudio() {
     clearAllSounds()
   }, [clearAllSounds])
 
+  const savePreset = useCallback((name: string) => {
+    saveUserPreset(name)
+  }, [saveUserPreset])
+
+  const deletePreset = useCallback((presetId: string) => {
+    deleteUserPreset(presetId)
+  }, [deleteUserPreset])
+
+  const selectUserPreset = useCallback((preset: UserSoundPreset) => {
+    audioGenerator.stopAll()
+    applyUserPreset(preset)
+  }, [applyUserPreset])
+
   return {
     activeSounds: sound.activeSounds,
     masterVolume: sound.masterVolume,
     currentPreset: sound.preset,
+    userPresets: sound.userPresets,
     setVolume,
     toggle,
     selectPreset,
     stopAll,
-    setMasterVolume
+    setMasterVolume,
+    savePreset,
+    deletePreset,
+    selectUserPreset
   }
 }

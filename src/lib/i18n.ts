@@ -50,8 +50,11 @@ export const translations = {
     oceanWaves: 'Ocean Waves',
     birds: 'Birds',
     fireplace: 'Fireplace',
+    wind: 'Wind',
     coffeeShop: 'Coffee Shop',
-    lofiBeats: 'Lo-Fi Beats',
+    library: 'Library',
+    train: 'Train',
+    typing: 'Typing',
     whiteNoise: 'White Noise',
     pinkNoise: 'Pink Noise',
     brownNoise: 'Brown Noise',
@@ -62,7 +65,7 @@ export const translations = {
     cozyFire: 'Cozy Fire',
     oceanBreeze: 'Ocean Breeze',
     deepFocus: 'Deep Focus',
-    lofiRain: 'Lo-Fi & Rain',
+    trainJourney: 'Train Journey',
 
     // Analytics
     analytics: 'Analytics',
@@ -95,6 +98,24 @@ export const translations = {
     // Random sound
     randomSound: 'Random Sound',
     playingRandom: 'Playing',
+
+    // Theme
+    theme: 'Theme',
+    light: 'Light',
+    dark: 'Dark',
+    system: 'System',
+
+    // Compact mode
+    compactMode: 'Compact',
+    expandedMode: 'Expanded',
+
+    // Custom presets
+    savePreset: 'Save Preset',
+    presetName: 'Preset Name',
+    myPresets: 'My Presets',
+    deletePreset: 'Delete',
+    save: 'Save',
+    cancel: 'Cancel',
   },
   ar: {
     // App
@@ -145,8 +166,11 @@ export const translations = {
     oceanWaves: 'أمواج البحر',
     birds: 'طيور',
     fireplace: 'موقد',
+    wind: 'رياح',
     coffeeShop: 'مقهى',
-    lofiBeats: 'لوفاي',
+    library: 'مكتبة',
+    train: 'قطار',
+    typing: 'كتابة',
     whiteNoise: 'ضوضاء بيضاء',
     pinkNoise: 'ضوضاء وردية',
     brownNoise: 'ضوضاء بنية',
@@ -157,7 +181,7 @@ export const translations = {
     cozyFire: 'دفء الموقد',
     oceanBreeze: 'نسيم البحر',
     deepFocus: 'تركيز عميق',
-    lofiRain: 'لوفاي ومطر',
+    trainJourney: 'رحلة قطار',
 
     // Analytics
     analytics: 'الإحصائيات',
@@ -190,6 +214,24 @@ export const translations = {
     // Random sound
     randomSound: 'صوت عشوائي',
     playingRandom: 'يعمل',
+
+    // Theme
+    theme: 'المظهر',
+    light: 'فاتح',
+    dark: 'داكن',
+    system: 'النظام',
+
+    // Compact mode
+    compactMode: 'مصغر',
+    expandedMode: 'موسع',
+
+    // Custom presets
+    savePreset: 'حفظ الإعداد',
+    presetName: 'اسم الإعداد',
+    myPresets: 'إعداداتي',
+    deletePreset: 'حذف',
+    save: 'حفظ',
+    cancel: 'إلغاء',
   },
 } as const
 

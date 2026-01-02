@@ -20,10 +20,17 @@ export interface TimerSettings {
   autoStartWork: boolean
 }
 
+export interface UserSoundPreset {
+  id: string
+  name: string
+  sounds: Record<string, number>
+}
+
 export interface SoundSettings {
   masterVolume: number // 0-1
   activeSounds: Record<string, number> // soundId -> volume (0-1)
   preset: string | null
+  userPresets: UserSoundPreset[]
 }
 
 export interface AppSettings extends TimerSettings {

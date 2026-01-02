@@ -15,7 +15,7 @@ const presetIcons: Record<string, string> = {
   'cozy-fire': '🔥🌧️',
   'ocean-breeze': '🌊',
   'deep-focus': '🧠',
-  'lofi-rain': '🎵🌧️'
+  'train-journey': '🚂🌧️'
 }
 
 const presetNameKeys: Record<string, TranslationKey> = {
@@ -24,7 +24,7 @@ const presetNameKeys: Record<string, TranslationKey> = {
   'cozy-fire': 'cozyFire',
   'ocean-breeze': 'oceanBreeze',
   'deep-focus': 'deepFocus',
-  'lofi-rain': 'lofiRain'
+  'train-journey': 'trainJourney'
 }
 
 export function SoundPresets({ currentPreset, onSelectPreset }: SoundPresetsProps) {
